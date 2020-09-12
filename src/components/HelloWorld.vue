@@ -23,7 +23,8 @@
       <div class="section section2">
         <div class="main">
           <div id="proposal" v-for="(proposal, index) in proposalsList" :key="index">
-            <h1 style="text-transform: capitalize;"> {{index + 1}}-  {{proposal.heading}}</h1>
+            
+            <h1 style="text-transform: capitalize;"><span style="font-size: 12px;">{{index + 1}})</span>   {{proposal.heading}}</h1>
             <textarea :class="['obj-' + index]" class="myTxt" :value="proposal.myInput"></textarea>
             <button id="copyBtn" class="copyImg" @click=" copyText(index)">
               <img src="@/assets/icons/icons8-copy.svg" style="width: 20px;">
