@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h1 class="title" style="text-align: center">Vue Notes</h1>
+    <h1 class="title" style="text-align: center">My Proposals</h1>
     <div class="appbody" style="display: flex;" :style="{height: windowHeight}">
       <div class="newOne section section1" :style="{height: windowHeight}">
         <div class="sidebar">
           <form>
-                      <input class="headingInput" :placeholder="headingPlaceHolder" type="text" v-model="newProposal.heading" required>
+        <input class="headingInput" :placeholder="headingPlaceHolder" type="text" v-model="newProposal.heading" required>
         <textarea
           class="myTxt2"
           type="text"
