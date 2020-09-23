@@ -2,39 +2,67 @@
   <div>
     <h1 class="title" style="text-align: center">My Proposals</h1>
     <div class="appbody" style="display: flex;" :style="{height: windowHeight}">
+
+      <!-- Add New Proposal  -->
+       
       <div class="newOne section section1" :style="{height: windowHeight}">
         <div class="sidebar">
           <form>
-        <input class="headingInput" :placeholder="headingPlaceHolder" type="text" v-model="newProposal.heading" required>
-        <textarea
-          class="myTxt2"
-          type="text"
-          @keyup.ctrl.enter="AddNew"
-          v-model="newProposal.myInput"
-          placeholder="Enter your Proposal Here"
-          required
-        >
-        </textarea>
-        <button id="addNewBtn" type="submit" class="btn btn-primary" @click.prevent="AddNew">Add New</button>
+            <input
+              class="headingInput"
+              :placeholder="headingPlaceHolder"
+              type="text"
+              v-model="newProposal.heading"
+              required
+            />
+            <textarea
+              class="myTxt2"
+              type="text"
+              @keyup.ctrl.enter="AddNew"
+              v-model="newProposal.myInput"
+              placeholder="Enter your Proposal Here"
+              required
+            ></textarea>
+            <button
+              id="addNewBtn"
+              type="submit"
+              class="btn btn-primary"
+              @click.prevent="AddNew"
+            >Add New</button>
           </form>
         </div>
       </div>
 
+
+      <!-- Saved Proposals  -->
+
       <div class="section section2">
         <div class="main">
           <div id="proposal" v-for="(proposal, index) in proposalsList" :key="index">
-            
-            <h1 style="text-transform: capitalize;"><span style="font-size: 12px;">{{index + 1}})</span>   {{proposal.heading}}</h1>
-            <textarea :class="['obj-' + index]" class="myTxt" :value="proposal.myInput"></textarea>
-            <button id="copyBtn" class="copyImg" @click=" copyText(index)">
-              <img src="@/assets/icons/icons8-copy.svg" style="width: 20px;">
+            <h1 style="text-transform: capitalize;">
+              <span style="font-size: 12px;">{{index + 1}})</span>
+              {{proposal.heading}}
+            </h1>
+            <textarea class="myTxt" 
+              :class="['obj-' + index]" 
+              v-model="proposal.myInput"
+              @keyup="proposal.showUpdateBtn = true "
+            ></textarea>
+            <button id="copyBtn" class="copyImg" title="Copy" @click="copyText(index)">
+              <img src="@/assets/icons/icons8-copy.svg" style="width: 20px;" />
             </button>
-            <button id="copyBtn" class="deleteImg" @click="deleteText(index)">
-              <img src="@/assets/icons/icons8-delete-bin.svg" style="width: 20px;">
+            <button id="copyBtn" class="deleteImg" title="Delete" @click="deleteText(index)">
+              <img src="@/assets/icons/icons8-delete-bin.svg" style="width: 20px;" />
+            </button>
+            <button id="copyBtn" class="update" title="Update" v-show="proposal.showUpdateBtn" @click="updateProposal(index)">
+              <img src="@/assets/icons/icons8-save.svg" style="width: 20px;" />
             </button>
           </div>
         </div>
       </div>
+
+      <!-- saved proposals end here  -->
+
     </div>
   </div>
 </template>
@@ -47,20 +75,23 @@ export default {
       headingPlaceHolder: "Enter heading here",
       newProposal: {
         myInput: "",
-        heading: ""
+        heading: "",
+        showUpdateBtn: false,
       },
       proposalsList: [],
     };
   },
+
   methods: {
     AddNew() {
-      if(this.newProposal.heading.trim() == "") {
-        this.headingPlaceHolder = "!Please Add heading first"
-      }else if(this.newProposal.myInput.trim() == ""){
-        console.log('hello fuck')
-      }
-      else{
-        this.proposalsList.push({"myInput": this.newProposal.myInput, "heading": this.newProposal.heading});
+      if (this.newProposal.heading.trim() == "") {
+        this.headingPlaceHolder = "!Please Add heading first";
+      } else {
+        this.proposalsList.push({ 
+          myInput: this.newProposal.myInput,
+          heading: this.newProposal.heading,
+          showUpdateBtn: this.newProposal.showUpdateBtn
+        });
         this.myProposal();
         this.newProposal.myInput = "";
         this.newProposal.heading = "";
@@ -68,34 +99,37 @@ export default {
     },
     copyText(index) {
       var textToCopy = document.querySelector(`.obj-${index}`);
-      textToCopy.select();  
+      textToCopy.select();
       document.execCommand("copy");
     },
-    deleteText(index){
-      this.proposalsList.splice(index, 1)
-      localStorage.setItem('storedData', JSON.stringify(this.proposalsList))
-      console.log(index);
+    deleteText(index) {
+      this.proposalsList.splice(index, 1);
+      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
+    },
+    updateProposal(index) {
+      this.proposalsList[index].showUpdateBtn = false
+      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
     },
     myProposal() {
-      localStorage.setItem('storedData', JSON.stringify(this.proposalsList))
-    }
+      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
+    },
   },
+
   computed: {
     windowHeight: function () {
       return `${window.innerHeight - 150}px  !important`;
-    }
+    },
   },
+
   mounted() {
-    if(localStorage.storedData) {
+    if (localStorage.storedData) {
       this.proposalsList = JSON.parse(localStorage.getItem("storedData"));
     }
-  }
+  },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 /* width */
 ::-webkit-scrollbar {
   width: 5px;
@@ -103,17 +137,17 @@ export default {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #2c3e50; 
+  background: #2c3e50;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
 
 .appbody {
@@ -130,7 +164,7 @@ export default {
   /* justify-content: center; */
   padding: 10px;
 }
-.sidebar{
+.sidebar {
   width: 90%;
 }
 .section2 {
@@ -145,25 +179,25 @@ export default {
   display: grid;
   grid-template-columns: auto auto;
 }
-#proposal{
+#proposal {
   display: flex;
-  flex-direction: column ;
+  flex-direction: column;
   justify-content: center;
   padding: 10px;
   position: relative;
 }
 
 .headingInput {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 15px;
-    border-color: #2c3e50;
-    border: 3px solid;
-    border-bottom: 0;
-    font-size: 15px;
-    font-weight: 900;
-    font-family: system-ui;
-    text-transform: capitalize;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px;
+  border-color: #2c3e50;
+  border: 3px solid;
+  border-bottom: 0;
+  font-size: 15px;
+  font-weight: 900;
+  font-family: system-ui;
+  text-transform: capitalize;
 }
 
 .myTxt {
@@ -178,38 +212,44 @@ export default {
   font-family: monospace;
   border: 3px solid rgb(43, 62, 80);
   padding: 15px;
-  width: 100%; 
-  height: 200px; 
+  width: 100%;
+  height: 200px;
   box-sizing: border-box;
 }
 
 #addNewBtn {
-    width: 100%;
-    border: 0;
-    background: #2c3e50;
-    color: #fff;
-    font-size: 30px;
-    font-family: monospace;
-    text-transform: uppercase;
-    cursor: pointer;
-    padding: 15px;
-    margin-top: -4px;
+  width: 100%;
+  border: 0;
+  background: #2c3e50;
+  color: #fff;
+  font-size: 30px;
+  font-family: monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 15px;
+  margin-top: -4px;
 }
 button#copyBtn {
-    position: absolute;
-    right: 10px;
-    background: #2c3e50;
-    color: #fff;
-    padding: 5px 8px;
-    border-color: black;
+  position: absolute;
+  right: 10px;
+  background: #2c3e50;
+  color: #fff;
+  padding: 5px 8px;
+  border-color: black;
+  cursor: pointer;
 }
 button.deleteImg {
-    position: absolute;
-    left: 10px;
-    bottom: 10px;
-    background: #2c3e50;
-    color: #fff;
-    padding: 5px 8px;
-    border-color: black;
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  background: #2c3e50;
+  color: #fff;
+  padding: 5px 8px;
+  border-color: black;
+}
+
+button.update {
+  left: 51px;
+  bottom: 10px;
 }
 </style>
