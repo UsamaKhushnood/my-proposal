@@ -37,28 +37,30 @@
       <!-- Saved Proposals  -->
 
       <div class="section section2">
-        <div class="main">
-          <div id="proposal" v-for="(proposal, index) in proposalsList" :key="index">
-            <h1 style="text-transform: capitalize;">
-              <span style="font-size: 12px;">{{index + 1}})</span>
-              {{proposal.heading}}
-            </h1>
-            <textarea class="myTxt" 
-              :class="['obj-' + index]" 
-              v-model="proposal.myInput"
-              @keyup="proposal.showUpdateBtn = true "
-            ></textarea>
-            <button id="copyBtn" class="copyImg" title="Copy" @click="copyText(index)">
-              <img src="@/assets/icons/icons8-copy.svg" style="width: 20px;" />
-            </button>
-            <button id="copyBtn" class="deleteImg" title="Delete" @click="deleteText(index)">
-              <img src="@/assets/icons/icons8-delete-bin.svg" style="width: 20px;" />
-            </button>
-            <button id="copyBtn" class="update" title="Update" v-show="proposal.showUpdateBtn" @click="updateProposal(index)">
-              <img src="@/assets/icons/icons8-save.svg" style="width: 20px;" />
-            </button>
-          </div>
-        </div>
+        <draggable  class="main" v-model="proposalsList" @start="dragging=true" @end="dragging=false"> 
+          <!-- <div> -->
+            <div id="proposal" v-for="(proposal, index) in proposalsList" :key="index">
+              <h1 style="text-transform: capitalize; pointer: move" title="Drag">
+                <span style="font-size: 12px;">{{index + 1}})</span>
+                {{proposal.heading}}
+              </h1>
+              <textarea class="myTxt" 
+                :class="['obj-' + index]" 
+                v-model="proposal.myInput"
+                @keyup="proposal.showUpdateBtn = true "
+              ></textarea>
+              <button id="copyBtn" class="copyImg" title="Copy" @click="copyText(index)">
+                <img src="@/assets/icons/icons8-copy.svg" style="width: 20px;" />
+              </button>
+              <button id="copyBtn" class="deleteImg" title="Delete" @click="deleteText(index)">
+                <img src="@/assets/icons/icons8-delete-bin.svg" style="width: 20px;" />
+              </button>
+              <button id="copyBtn" class="update" title="Update" v-show="proposal.showUpdateBtn" @click="updateProposal(index)">
+                <img src="@/assets/icons/icons8-save.svg" style="width: 20px;" />
+              </button>
+            </div>
+          <!-- </div>           -->
+        </draggable>
       </div>
 
       <!-- saved proposals end here  -->
@@ -68,8 +70,11 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable';
+
 export default {
   name: "HelloWorld",
+  components: {draggable},
   data() {
     return {
       headingPlaceHolder: "Enter heading here",
