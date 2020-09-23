@@ -37,11 +37,11 @@
       <!-- Saved Proposals  -->
 
       <div class="section section2">
-        <draggable  class="main" v-model="proposalsList" @start="dragging=true" @end="dragging=false"> 
+        <draggable  class="main" v-model="proposalsList"  @start="dragging=true" @end="run"> 
           <!-- <div> -->
             <div id="proposal" v-for="(proposal, index) in proposalsList" :key="index">
-              <h1 style="text-transform: capitalize; pointer: move" title="Drag">
-                <span style="font-size: 12px;">{{index + 1}})</span>
+              <h1 class="singleProposalHeading" title="Drag">
+                <!-- <span style="font-size: 12px;">{{index + 1}})</span> -->
                 {{proposal.heading}}
               </h1>
               <textarea class="myTxt" 
@@ -101,6 +101,9 @@ export default {
         this.newProposal.myInput = "";
         this.newProposal.heading = "";
       }
+    },
+    run(){
+      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
     },
     copyText(index) {
       var textToCopy = document.querySelector(`.obj-${index}`);
@@ -203,6 +206,17 @@ export default {
   font-weight: 900;
   font-family: system-ui;
   text-transform: capitalize;
+}
+
+.singleProposalHeading{
+  text-transform: capitalize;
+  border-radius: 10px 10px 0 0;
+  cursor: grab;
+  margin: 0;
+  background: #2c3e50;
+  color: #fff;
+  text-align: center;
+  padding: 5px;
 }
 
 .myTxt {
