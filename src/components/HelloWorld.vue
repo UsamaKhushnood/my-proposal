@@ -10,6 +10,7 @@
           <form>
             <input
               class="headingInput"
+              :class="{headingMissing: headingMissing}"
               :placeholder="headingPlaceHolder"
               type="text"
               v-model="newProposal.heading"
@@ -17,6 +18,7 @@
             />
             <textarea
               class="myTxt2"
+              :class="{inputMissing: inputMissing}"
               type="text"
               @keyup.ctrl.enter="AddNew"
               v-model="newProposal.myInput"
@@ -37,7 +39,7 @@
       <!-- Saved Proposals  -->
 
       <div class="section section2">
-        <draggable  class="main" v-model="proposalsList"  @start="dragging=true" @end="run"> 
+        <draggable  class="main" v-model="proposalsList"  @start="dragging=true" @end="updateAccordingToSorting"> 
           <!-- <div> -->
             <div id="proposal" v-for="(proposal, index) in proposalsList" :key="index">
               <h1 class="singleProposalHeading" title="Drag">
@@ -50,13 +52,13 @@
                 @keyup="proposal.showUpdateBtn = true "
               ></textarea>
               <button id="copyBtn" class="copyImg" title="Copy" @click="copyText(index)">
-                <img src="@/assets/icons/icons8-copy.svg" style="width: 20px;" />
+                <img src="@/assets/icons/icons8-copy.svg" style="width: 20px;" /> Copy
               </button>
               <button id="copyBtn" class="deleteImg" title="Delete" @click="deleteText(index)">
-                <img src="@/assets/icons/icons8-delete-bin.svg" style="width: 20px;" />
+                <img src="@/assets/icons/icons8-delete-bin.svg" style="width: 20px;" /> Delete
               </button>
               <button id="copyBtn" class="update" title="Update" v-show="proposal.showUpdateBtn" @click="updateProposal(index)">
-                <img src="@/assets/icons/icons8-save.svg" style="width: 20px;" />
+                <img src="@/assets/icons/icons8-save.svg" style="width: 20px;" /> Update
               </button>
             </div>
           <!-- </div>           -->
@@ -78,6 +80,8 @@ export default {
   data() {
     return {
       headingPlaceHolder: "Enter heading here",
+      headingMissing: false,
+      inputMissing: false,
       newProposal: {
         myInput: "",
         heading: "",
@@ -89,20 +93,28 @@ export default {
 
   methods: {
     AddNew() {
+      // Checking if the Input Fields are filled 
       if (this.newProposal.heading.trim() == "") {
         this.headingPlaceHolder = "!Please Add heading first";
-      } else {
+        this.headingMissing = true;
+      }else if(this.newProposal.myInput.trim() == ""){
+        this.inputMissing = true;
+      }else {
         this.proposalsList.push({ 
           myInput: this.newProposal.myInput,
           heading: this.newProposal.heading,
           showUpdateBtn: this.newProposal.showUpdateBtn
         });
+
+        // Resetting All Values
         this.myProposal();
         this.newProposal.myInput = "";
         this.newProposal.heading = "";
+        this.inputMissing = false;
+        this.headingMissing = false;
       }
     },
-    run(){
+    updateAccordingToSorting(){
       localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
     },
     copyText(index) {
@@ -138,137 +150,5 @@ export default {
 </script>
 
 <style scoped>
-/* width */
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #2c3e50;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-.appbody {
-  overflow: hidden;
-  width: 95%;
-  margin: 0 auto;
-}
-
-.section1 {
-  width: 40%;
-  overflow: hidden;
-  height: 450px;
-  display: flex;
-  /* justify-content: center; */
-  padding: 10px;
-}
-.sidebar {
-  width: 90%;
-}
-.section2 {
-  width: 60%;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  z-index: 999;
-  height: 100%;
-  padding-right: 50px;
-}
-.main {
-  display: grid;
-  grid-template-columns: auto auto;
-}
-#proposal {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 10px;
-  position: relative;
-}
-
-.headingInput {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 15px;
-  border-color: #2c3e50;
-  border: 3px solid;
-  border-bottom: 0;
-  font-size: 15px;
-  font-weight: 900;
-  font-family: system-ui;
-  text-transform: capitalize;
-}
-
-.singleProposalHeading{
-  text-transform: capitalize;
-  border-radius: 10px 10px 0 0;
-  cursor: grab;
-  margin: 0;
-  background: #2c3e50;
-  color: #fff;
-  text-align: center;
-  padding: 5px;
-}
-
-.myTxt {
-  font-family: monospace;
-  border: 3px solid rgb(43, 62, 80);
-  padding: 15px;
-  width: 100%;
-  height: 200px;
-  box-sizing: border-box;
-}
-.myTxt2 {
-  font-family: monospace;
-  border: 3px solid rgb(43, 62, 80);
-  padding: 15px;
-  width: 100%;
-  height: 200px;
-  box-sizing: border-box;
-}
-
-#addNewBtn {
-  width: 100%;
-  border: 0;
-  background: #2c3e50;
-  color: #fff;
-  font-size: 30px;
-  font-family: monospace;
-  text-transform: uppercase;
-  cursor: pointer;
-  padding: 15px;
-  margin-top: -4px;
-}
-button#copyBtn {
-  position: absolute;
-  right: 10px;
-  background: #2c3e50;
-  color: #fff;
-  padding: 5px 8px;
-  border-color: black;
-  cursor: pointer;
-}
-button.deleteImg {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  background: #2c3e50;
-  color: #fff;
-  padding: 5px 8px;
-  border-color: black;
-}
-
-button.update {
-  left: 51px;
-  bottom: 10px;
-}
+  @import '../css/style.css';
 </style>
