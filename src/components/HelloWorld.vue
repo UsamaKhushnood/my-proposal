@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="title" style="text-align: center">My Proposals</h1>
+    <h1 class="title" style="text-align: center; font-size: 50px ">Quick Bid</h1>
     <div class="appbody" style="display: flex;" :style="{height: windowHeight}">
 
       <!-- Add New Proposal  -->
@@ -39,10 +39,10 @@
       <!-- Saved Proposals  -->
 
       <div class="section section2">
-        <draggable  class="main" v-model="proposalsList"  @start="dragging=true" @end="updateAccordingToSorting"> 
+        <draggable  class="main" v-model="proposalsList"  @start="dragging=true" @end="updateAccordingToSorting" handle=".handle"> 
           <!-- <div> -->
             <div id="proposal" v-for="(proposal, index) in proposalsList" :key="index">
-              <h1 class="singleProposalHeading" title="Drag">
+              <h1 class="singleProposalHeading handle" title="Drag to sort">
                 <!-- <span style="font-size: 12px;">{{index + 1}})</span> -->
                 {{proposal.heading}}
               </h1>
