@@ -1,98 +1,122 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 /* width */
+
 ::-webkit-scrollbar {
     width: 5px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
+}
+
+
+/* Track */
+
+ ::-webkit-scrollbar-track {
     background: #f1f1f1;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
+}
+
+
+/* Handle */
+
+ ::-webkit-scrollbar-thumb {
     background: #2c3e50;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
+}
+
+
+/* Handle on hover */
+
+ ::-webkit-scrollbar-thumb:hover {
     background: #555;
-  }
-  
-  .appbody {
+}
+
+::selection {
+    background: #000000 !important;
+    color: #fafafa;
+}
+
+body {
+    background: #e8e8e8;
+}
+
+.appbody {
     overflow: hidden;
     width: 95%;
     margin: 0 auto;
-  }
-  
-  .section1 {
+}
+
+.section1 {
     width: 40%;
     overflow: hidden;
     height: 450px;
     display: flex;
     /* justify-content: center; */
     padding: 10px;
-  }
-  .sidebar {
+}
+
+.sidebar {
     width: 90%;
-  }
-  .section2 {
+}
+
+.section2 {
     width: 60%;
     overflow-y: scroll;
     overflow-x: hidden;
     z-index: 999;
     height: 100%;
     padding-right: 50px;
-  }
-  .main {
+}
+
+.main {
     display: grid;
     grid-template-columns: 50% 50%;
-  }
-  #proposal {
+}
+
+#proposal {
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 10px;
     position: relative;
-  }
+}
 
-  .headingInput::-webkit-input-placeholder {
+.headingInput::-webkit-input-placeholder {
     color: #fff;
-  }
-  
-  .headingInput:-ms-input-placeholder {
-    color: #fff;
-  }
-  
-  .headingInput::placeholder {
-    color: #fff;
-  }
+}
 
-  .headingMissing::placeholder {
-    color: red;
-  }
-  .headingMissing::-webkit-input-placeholder {
-    color: red;
-  }
-  .headingMissing:-ms-input-placeholder {
-    color: red;
-  }
+.headingInput:-ms-input-placeholder {
+    color: #fff;
+}
 
-  .inputMissing::placeholder {
-      color: red;
-      font-size: 20px;
-  }
-  .inputMissing::-webkit-input-placeholder {
-      color: red;
-      font-size: 20px;
-  }
-  .inputMissing:-ms-input-placeholder {
-      color: red;
-      font-size: 20px;
-  }
-  
-  .headingInput {
+.headingInput::placeholder {
+    color: #fff;
+}
+
+.headingMissing::placeholder {
+    color: red;
+}
+
+.headingMissing::-webkit-input-placeholder {
+    color: red;
+}
+
+.headingMissing:-ms-input-placeholder {
+    color: red;
+}
+
+.inputMissing::placeholder {
+    color: red;
+    font-size: 20px;
+}
+
+.inputMissing::-webkit-input-placeholder {
+    color: red;
+    font-size: 20px;
+}
+
+.inputMissing:-ms-input-placeholder {
+    color: red;
+    font-size: 20px;
+}
+
+.headingInput {
     width: 100%;
     box-sizing: border-box;
     padding: 15px;
@@ -105,9 +129,9 @@
     color: #fff;
     border-color: #2c3e50;
     border-radius: 10px 10px 0 0;
-  }
-  
-  .singleProposalHeading{
+}
+
+.singleProposalHeading {
     text-transform: capitalize;
     font-family: 'Roboto', sans-serif;
     font-size: 25px;
@@ -118,26 +142,27 @@
     background: #2c3e50;
     color: #fff;
     text-align: center;
-  }
-  
-  .myTxt {
+}
+
+.myTxt {
     font-family: monospace;
     border: 3px solid rgb(43, 62, 80);
     padding: 15px;
     width: 100%;
     height: 200px;
     box-sizing: border-box;
-  }
-  .myTxt2 {
+}
+
+.myTxt2 {
     font-family: monospace;
     border: 3px solid rgb(43, 62, 80);
     padding: 15px;
     width: 100%;
     height: 200px;
     box-sizing: border-box;
-  }
-  
-  #addNewBtn {
+}
+
+#addNewBtn {
     width: 100%;
     border: 0;
     background: #2c3e50;
@@ -148,8 +173,9 @@
     cursor: pointer;
     padding: 15px;
     margin-top: -4px;
-  }
-  button#copyBtn {
+}
+
+button#copyBtn {
     position: absolute;
     background: #2c3e50;
     color: #fff;
@@ -158,24 +184,24 @@
     display: flex;
     align-items: center;
     transition: all .3s ease-in
-  }
-  
-  button#copyBtn img {
+}
+
+button#copyBtn img {
     margin-right: 7px;
-  }
-  
-  button.copyImg {
+}
+
+button.copyImg {
     right: 26px;
     top: 20px;
     border-color: none;
-  }
-  
-  button.copyImg:hover {
+}
+
+button.copyImg:hover {
     background: #0a3d62 !important;
     border-color: #0a3d62;
-  }
-  
-  button.deleteImg {
+}
+
+button.deleteImg {
     position: absolute;
     left: 10px;
     bottom: 10px;
@@ -185,21 +211,28 @@
     border-color: black;
     width: 38px;
     transition: all .3s ease-in
-  }
-  
-  button.deleteImg:hover {
+}
+
+button.deleteImg:hover {
     background: #c0392b !important;
     width: 88px !important
-  }
-  
-  button.update {
+}
+
+button.update {
     left: 10px;
     bottom: 45px;
-    width: 38px;  
+    width: 38px;
     border-color: black;
-  }
-  
-  button.update:hover {
+}
+
+button.update:hover {
     background: green !important;
-    width: 88px !important  
-  }
+    width: 88px !important
+}
+
+.loading_spinner {
+    display: flex;
+    justify-content: center;
+    height: 60vh;
+    align-items: center;
+}
