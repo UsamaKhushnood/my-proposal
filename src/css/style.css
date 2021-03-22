@@ -183,7 +183,8 @@ button#copyBtn {
     cursor: pointer;
     display: flex;
     align-items: center;
-    transition: all .3s ease-in
+    overflow: hidden;
+    transition: all .3s ease-in;
 }
 
 button#copyBtn img {
@@ -210,12 +211,21 @@ button.deleteImg {
     padding: 5px 8px;
     border-color: black;
     width: 38px;
+    overflow: hidden;
     transition: all .3s ease-in
+}
+
+button.deleteImg:hover,
+button.update:hover {
+    width: 100px !important
 }
 
 button.deleteImg:hover {
     background: #c0392b !important;
-    width: 88px !important
+}
+
+button.update:hover {
+    background: green !important;
 }
 
 button.update {
@@ -223,11 +233,6 @@ button.update {
     bottom: 45px;
     width: 38px;
     border-color: black;
-}
-
-button.update:hover {
-    background: green !important;
-    width: 88px !important
 }
 
 .loading_spinner {

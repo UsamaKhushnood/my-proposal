@@ -3,14 +3,13 @@ import App from './App.vue'
 import router from './router'
 import store from './store/store'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-
-// Import Bootstrap an BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue)
-    // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+Vue.config.productionTip = false
 
 // using firebase 
 const firebase = require("firebase")
@@ -27,22 +26,23 @@ const firebaseConfig = {
     appId: "1:997442622377:web:af92198e23e83d64742ab8",
     measurementId: "G-SC42QFMY5E"
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-Vue.prototype.$firebase = firebase;
+firebase.auth().onAuthStateChanged(user => {
+    store.dispatch("fetchUser", user);
+    console.log(user);
+});
+
 // setting up global varibale 
+Vue.prototype.$firebase = firebase;
 const db = firebase.firestore();
 Vue.prototype.$db = db;
-
-
 
 // Adding Robotod font
 var link = document.createElement('link');
 link.href = "//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons";
 document.head.appendChild(link);
-
-
-Vue.config.productionTip = false
 
 new Vue({
     router,

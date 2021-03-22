@@ -11,8 +11,9 @@
             <input
               type="email"
               id="email"
-              v-model="email"
+              v-model="form.email"
               class="form-control form-control-lg"
+              required
             />
           </div>
           <div class="col-sm-12 form-group">
@@ -20,15 +21,16 @@
             <input
               type="password"
               id="password"
-              v-model="password"
+              v-model="form.password"
               class="form-control form-control-lg"
+              required
             />
           </div>
           <div class="col-sm-12 text-center form-group">
             <button
               v-bind:disabled="xhrRequest"
               v-bind:class="{ disabled: xhrRequest }"
-              class="btn btn-lg btn-primary px-4"
+              class="btn btn-lg btn-primary px-4 btn-block"
             >
               <span v-if="!xhrRequest">Login</span>
               <span v-if="xhrRequest">Please Wait...</span>
@@ -53,13 +55,14 @@
   </div>
 </template>
 <script>
-// import firebase from "firebase";
 export default {
   name: "Signup",
   data() {
     return {
-      email: "",
-      password: "",
+      form: {
+        email: "",
+        password: "",
+      },
       xhrRequest: false,
       message: '',
     };
@@ -69,12 +72,12 @@ export default {
       let v = this;
       v.xhrRequest = true;
       v.message = "";
-
-      this.$firebase.auth().createUserWithEmailAndPassword(v.email, v.password).then(
+      this.$firebase.auth().signInWithEmailAndPassword(v.form.email, v.form.password).then(
           () => {
-            v.message = "Register Successfully.";
+            v.message = "Login Successfully.";
             v.xhrRequest = false;
             v.makeToast('success', "Success")
+            this.$router.push({ name: 'Home', query: { redirect: '/' } });
           },
           (error) => {
             v.message = error.message;

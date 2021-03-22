@@ -5,11 +5,10 @@
     </h1>
     <div
       class="appbody"
-      style="display: flex"
-      :style="{ height: windowHeight }"
+      style="display: flex;height: 80vh;"
     >
       <!-- Add New Proposal  -->
-      <div class="newOne section section1" :style="{ height: windowHeight }">
+      <div class="newOne section section1">
         <div class="sidebar">
           <form>
             <input
@@ -44,7 +43,6 @@
       <!-- Saved Proposals  -->
 
       <div class="section section2">
-
         <div v-show="proposalsList.length < 1" class="loading_spinner">
           <b-spinner label="Spinning"></b-spinner>
         </div>
@@ -56,7 +54,7 @@
           @end="updateAccordingToSorting"
           handle=".handle"
         >
-          <!-- <div> -->  
+          <!-- <div> -->
 
           <div
             id="proposal"
@@ -116,6 +114,7 @@
 
 <script>
 import draggable from "vuedraggable";
+import { mapGetters } from "vuex";
 export default {
   name: "Proposals",
   components: { draggable },
@@ -148,10 +147,17 @@ export default {
           showUpdateBtn: this.newProposal.showUpdateBtn,
         });
         //save data to firestore
+        // this.$db
+        //   .collection("usersd")
+        //   .doc(this.$firebase.auth().currentUser.uid)
+        //   .onSnapshot(function(doc) {
+        //     console.log("current data:", doc.data());
+        //     var newData = doc.data();
+        //     this.profileData = newData;
+        //   });
         this.$db
           .collection("usersNewProposal")
           .add({
-            
             myInput: this.newProposal.myInput,
             heading: this.newProposal.heading,
             showUpdateBtn: this.newProposal.showUpdateBtn,
@@ -207,6 +213,9 @@ export default {
     windowHeight: function() {
       return `${window.innerHeight - 150}px  !important`;
     },
+    ...mapGetters({
+      user: "user",
+    }),
   },
 
   mounted() {
