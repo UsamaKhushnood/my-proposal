@@ -3,10 +3,7 @@
     <h1 class="title" style="text-align: center; font-size: 50px">
       My Proposals
     </h1>
-    <div
-      class="appbody"
-      style="display: flex;height: 80vh;"
-    >
+    <div class="appbody" style="display: flex;height: 80vh;">
       <!-- Add New Proposal  -->
       <div class="newOne section section1">
         <div class="sidebar">
@@ -76,9 +73,10 @@
               class="copyImg"
               title="Copy"
               @click="copyText(index)"
+              style="border: 1px solid white;"
             >
               <img src="@/assets/icons/icons8-copy.svg" style="width: 20px" />
-              Copy
+              
             </button>
             <button
               id="copyBtn"
@@ -90,7 +88,7 @@
                 src="@/assets/icons/icons8-delete-bin.svg"
                 style="width: 20px"
               />
-              Delete
+              <span style="margin-left: 7px;">Delete</span>
             </button>
             <button
               id="copyBtn"
@@ -100,7 +98,7 @@
               @click="updateProposal(index)"
             >
               <img src="@/assets/icons/icons8-save.svg" style="width: 20px" />
-              Update
+              <span style="margin-left: 7px;">Update</span>
             </button>
           </div>
           <!-- </div>           -->
@@ -146,15 +144,6 @@ export default {
           heading: this.newProposal.heading,
           showUpdateBtn: this.newProposal.showUpdateBtn,
         });
-        //save data to firestore
-        // this.$db
-        //   .collection("usersd")
-        //   .doc(this.$firebase.auth().currentUser.uid)
-        //   .onSnapshot(function(doc) {
-        //     console.log("current data:", doc.data());
-        //     var newData = doc.data();
-        //     this.profileData = newData;
-        //   });
         this.$db
           .collection("usersNewProposal")
           .add({
@@ -187,15 +176,27 @@ export default {
       document.execCommand("copy");
     },
     deleteText(index) {
-      this.proposalsList.splice(index, 1);
-      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
+      this.$db
+        .collection("usersNewProposal")
+        .doc(this.proposalsList[index].id)
+        .delete()
+        .then(() => {
+          console.log("deleted Successfully");
+          this.proposalsList.splice(index, 1);
+        })
+        .catch((error) => {
+          console.log("Opps fail to delete record", error);
+        });
     },
     updateProposal(index) {
       this.proposalsList[index].showUpdateBtn = false;
-      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
-    },
-    myProposal() {
-      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
+      console.log(this.proposalsList[index].id);
+      this.$db
+        .collection("usersNewProposal")
+        .doc(this.proposalsList[index].id)
+        .update({
+          myInput: this.proposalsList[index].myInput,
+        });
     },
     getFireStoreData() {
       this.$db
@@ -203,16 +204,18 @@ export default {
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            this.proposalsList.push(doc.data());
+            this.proposalsList.push({
+              id: doc.id,
+              heading: doc.data().heading,
+              myInput: doc.data().myInput,
+              showUpdateBtn: doc.data().showUpdateBtn,
+            });
           });
         });
     },
   },
 
   computed: {
-    windowHeight: function() {
-      return `${window.innerHeight - 150}px  !important`;
-    },
     ...mapGetters({
       user: "user",
     }),
