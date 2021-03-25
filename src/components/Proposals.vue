@@ -3,11 +3,11 @@
     <h1 class="title" style="text-align: center; font-size: 50px">
       My Proposals
     </h1>
-    <div class="appbody" style="display: flex;height: 80vh;">
+    <div class="appbody" style="display: flex; height: 80vh">
       <!-- Add New Proposal  -->
       <div class="newOne section section1">
         <div class="sidebar">
-          <form>
+          <form @submit.prevent="AddNew">
             <input
               class="headingInput"
               :class="{ headingMissing: headingMissing }"
@@ -25,12 +25,7 @@
               placeholder="Enter your Proposal Here"
               required
             ></textarea>
-            <button
-              id="addNewBtn"
-              type="submit"
-              class="btn btn-primary"
-              @click.prevent="AddNew"
-            >
+            <button id="addNewBtn" type="submit" class="btn btn-primary">
               Add New
             </button>
           </form>
@@ -73,10 +68,9 @@
               class="copyImg"
               title="Copy"
               @click="copyText(index)"
-              style="border: 1px solid white;"
+              style="border: 1px solid white"
             >
               <img src="@/assets/icons/icons8-copy.svg" style="width: 20px" />
-              
             </button>
             <button
               id="copyBtn"
@@ -88,7 +82,7 @@
                 src="@/assets/icons/icons8-delete-bin.svg"
                 style="width: 20px"
               />
-              <span style="margin-left: 7px;">Delete</span>
+              <span style="margin-left: 7px">Delete</span>
             </button>
             <button
               id="copyBtn"
@@ -98,7 +92,7 @@
               @click="updateProposal(index)"
             >
               <img src="@/assets/icons/icons8-save.svg" style="width: 20px" />
-              <span style="margin-left: 7px;">Update</span>
+              <span style="margin-left: 7px">Update</span>
             </button>
           </div>
           <!-- </div>           -->
@@ -127,11 +121,13 @@ export default {
         showUpdateBtn: false,
       },
       proposalsList: [],
+      message: null,
     };
   },
 
   methods: {
     AddNew() {
+      var v = this
       // Checking if the Input Fields are filled
       if (this.newProposal.heading.trim() == "") {
         this.headingPlaceHolder = "!Please Add heading first";
@@ -139,11 +135,6 @@ export default {
       } else if (this.newProposal.myInput.trim() == "") {
         this.inputMissing = true;
       } else {
-        this.proposalsList.push({
-          myInput: this.newProposal.myInput,
-          heading: this.newProposal.heading,
-          showUpdateBtn: this.newProposal.showUpdateBtn,
-        });
         this.$db
           .collection("usersNewProposal")
           .add({
@@ -152,29 +143,36 @@ export default {
             showUpdateBtn: this.newProposal.showUpdateBtn,
           })
           .then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
+            v.makeToast('primary', 'Add Successfull');
+            v.message = 'New Data Added Successfully';
+            console.log(docRef.id);
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            v.makeToast('danger', 'Error');
+            v.message = error;
           });
 
         // Resetting All Values
-        this.myProposal();
+        this.getFireStoreData();
         this.newProposal.myInput = "";
         this.newProposal.heading = "";
         this.headingPlaceHolder = "Enter Heading here";
         this.inputMissing = false;
         this.headingMissing = false;
+        // this.updateAccordingToSorting()
       }
     },
+
     updateAccordingToSorting() {
-      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
+      this.proposalsList = this.$db.collection("usersNewProposal").orderBy("heading")
     },
+
     copyText(index) {
       var textToCopy = document.querySelector(`.obj-${index}`);
       textToCopy.select();
       document.execCommand("copy");
     },
+
     deleteText(index) {
       this.$db
         .collection("usersNewProposal")
@@ -188,6 +186,7 @@ export default {
           console.log("Opps fail to delete record", error);
         });
     },
+
     updateProposal(index) {
       this.proposalsList[index].showUpdateBtn = false;
       console.log(this.proposalsList[index].id);
@@ -198,11 +197,10 @@ export default {
           myInput: this.proposalsList[index].myInput,
         });
     },
+
     getFireStoreData() {
-      this.$db
-        .collection("usersNewProposal")
-        .get()
-        .then((querySnapshot) => {
+      this.proposalsList = []
+      this.$db.collection("usersNewProposal").get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             this.proposalsList.push({
               id: doc.id,
@@ -213,6 +211,15 @@ export default {
           });
         });
     },
+
+    // Genrating toast 
+    makeToast(variant, title) {
+      this.$bvToast.toast(this.message, {
+        title: title,
+        variant: variant,
+        solid: true
+      })
+    }    
   },
 
   computed: {

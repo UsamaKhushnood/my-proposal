@@ -9,7 +9,7 @@
           <div class="col-sm-12 form-group">
             <label for="name">User Name</label>
             <input
-              type="text"
+              type="name"
               id="name"
               v-model="form.name"
               class="form-control form-control-lg"
