@@ -1,13 +1,18 @@
 <template>
   <div>
-    <h1 class="title" style="text-align: center; font-size: 50px">
-      My Proposals
+    <h1 class="title" style="text-align: center; font-size: 50px ">
+      Quick Bid
     </h1>
-    <div class="appbody" style="display: flex; height: 80vh">
+    <div
+      class="appbody"
+      style="display: flex;"
+      :style="{ height: windowHeight }"
+    >
       <!-- Add New Proposal  -->
-      <div class="newOne section section1">
+
+      <div class="newOne section section1" :style="{ height: windowHeight }">
         <div class="sidebar">
-          <form @submit.prevent="AddNew">
+          <form>
             <input
               class="headingInput"
               :class="{ headingMissing: headingMissing }"
@@ -25,20 +30,59 @@
               placeholder="Enter your Proposal Here"
               required
             ></textarea>
-            <button id="addNewBtn" type="submit" class="btn btn-primary">
+            <button
+              id="addNewBtn"
+              type="submit"
+              class="btn btn-primary"
+              @click.prevent="AddNew"
+            >
               Add New
             </button>
           </form>
+
+          <div class="variable_text text-center">
+            <h2 class="mt-5">Add New Variable Text</h2>
+            <form>
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Variable Text"
+                  v-model="variableText"
+                  aria-describedby="button-addon"
+                  @keyup.ctrl.enter="AddNewVariable()"
+                />
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-dark "
+                    type="button"
+                    id="button-addon"
+                    @click="AddNewVariable()"
+                  >
+                    Add Variable
+                  </button>
+                </div>
+              </div>
+            </form>
+            <p>{{ newProposal.myInput }}</p>
+            <p>{{ variableText }}</p>
+
+            <div
+              class="variableslist"
+              v-for="(variable, vIndex) in variableTextList"
+              :key="vIndex"
+            >
+              <ul class="list-group">
+                <li class="list-group-item text-left" :class="'list-group-item' + vIndex ">{{variable}} </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Saved Proposals  -->
 
       <div class="section section2">
-        <div v-show="proposalsList.length < 1" class="loading_spinner">
-          <b-spinner label="Spinning"></b-spinner>
-        </div>
-
         <draggable
           class="main"
           v-model="proposalsList"
@@ -47,7 +91,6 @@
           handle=".handle"
         >
           <!-- <div> -->
-
           <div
             id="proposal"
             v-for="(proposal, index) in proposalsList"
@@ -68,9 +111,9 @@
               class="copyImg"
               title="Copy"
               @click="copyText(index)"
-              style="border: 1px solid white"
             >
-              <img src="@/assets/icons/icons8-copy.svg" style="width: 20px" />
+              <img src="@/assets/icons/icons8-copy.svg" style="width: 20px;" />
+              Copy
             </button>
             <button
               id="copyBtn"
@@ -80,9 +123,9 @@
             >
               <img
                 src="@/assets/icons/icons8-delete-bin.svg"
-                style="width: 20px"
+                style="width: 20px;"
               />
-              <span style="margin-left: 7px">Delete</span>
+              Delete
             </button>
             <button
               id="copyBtn"
@@ -91,8 +134,8 @@
               v-show="proposal.showUpdateBtn"
               @click="updateProposal(index)"
             >
-              <img src="@/assets/icons/icons8-save.svg" style="width: 20px" />
-              <span style="margin-left: 7px">Update</span>
+              <img src="@/assets/icons/icons8-save.svg" style="width: 20px;" />
+              Update
             </button>
           </div>
           <!-- </div>           -->
@@ -106,9 +149,9 @@
 
 <script>
 import draggable from "vuedraggable";
-import { mapGetters } from "vuex";
+
 export default {
-  name: "Proposals",
+  name: "SavedTemplates",
   components: { draggable },
   data() {
     return {
@@ -120,14 +163,20 @@ export default {
         heading: "",
         showUpdateBtn: false,
       },
+      variableText: null,
+      variableTextList: [],
+      finalText: null,
       proposalsList: [],
-      message: null,
     };
   },
 
   methods: {
+    AddNewVariable() {
+      this.variableTextList.push(this.variableText);
+      this.variableText = ''
+    },
+
     AddNew() {
-      var v = this
       // Checking if the Input Fields are filled
       if (this.newProposal.heading.trim() == "") {
         this.headingPlaceHolder = "!Please Add heading first";
@@ -135,102 +184,45 @@ export default {
       } else if (this.newProposal.myInput.trim() == "") {
         this.inputMissing = true;
       } else {
-        this.$db
-          .collection("usersNewProposal")
-          .add({
-            myInput: this.newProposal.myInput,
-            heading: this.newProposal.heading,
-            showUpdateBtn: this.newProposal.showUpdateBtn,
-          })
-          .then(function(docRef) {
-            v.makeToast('primary', 'Add Successfull');
-            v.message = 'New Data Added Successfully';
-            console.log(docRef.id);
-          })
-          .catch(function(error) {
-            v.makeToast('danger', 'Error');
-            v.message = error;
-          });
+        this.proposalsList.push({
+          myInput: this.newProposal.myInput,
+          heading: this.newProposal.heading,
+          showUpdateBtn: this.newProposal.showUpdateBtn,
+        });
 
         // Resetting All Values
-        this.getFireStoreData();
-        // this.updateAccordingToSorting();
+        this.myProposal();
         this.newProposal.myInput = "";
         this.newProposal.heading = "";
-        this.headingPlaceHolder = "Enter Heading here";
         this.inputMissing = false;
         this.headingMissing = false;
-        // this.updateAccordingToSorting()
       }
     },
-
     updateAccordingToSorting() {
-      this.proposalsList = this.$db.collection("usersNewProposal").orderBy("heading", "asc")
+      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
     },
-
     copyText(index) {
       var textToCopy = document.querySelector(`.obj-${index}`);
       textToCopy.select();
       document.execCommand("copy");
     },
-
     deleteText(index) {
-      this.$db
-        .collection("usersNewProposal")
-        .doc(this.proposalsList[index].id)
-        .delete()
-        .then(() => {
-          console.log("deleted Successfully");
-          this.proposalsList.splice(index, 1);
-        })
-        .catch((error) => {
-          console.log("Opps fail to delete record", error);
-        });
+      this.proposalsList.splice(index, 1);
+      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
     },
-
     updateProposal(index) {
       this.proposalsList[index].showUpdateBtn = false;
-      console.log(this.proposalsList[index].id);
-      this.$db
-        .collection("usersNewProposal")
-        .doc(this.proposalsList[index].id)
-        .update({
-          myInput: this.proposalsList[index].myInput,
-        });
+      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
     },
-
-    getFireStoreData() {
-      this.proposalsList = []
-      this.$db.collection("usersNewProposal").orderBy('heading', "asc").get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            this.proposalsList.push({
-              id: doc.id,
-              heading: doc.data().heading,
-              myInput: doc.data().myInput,
-              showUpdateBtn: doc.data().showUpdateBtn,
-            });
-          });
-        });
+    myProposal() {
+      localStorage.setItem("storedData", JSON.stringify(this.proposalsList));
     },
-
-    // Genrating toast 
-    makeToast(variant, title) {
-      this.$bvToast.toast(this.message, {
-        title: title,
-        variant: variant,
-        solid: true
-      })
-    }    
-  },
-
-  computed: {
-    ...mapGetters({
-      user: "user",
-    }),
   },
 
   mounted() {
-    this.getFireStoreData();
+    if (localStorage.storedData) {
+      this.proposalsList = JSON.parse(localStorage.getItem("storedData"));
+    }
   },
 };
 </script>
