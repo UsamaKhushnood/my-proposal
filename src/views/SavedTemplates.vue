@@ -128,12 +128,13 @@
       <div class="col-md-3">
         <div class="row" v-show="variablesList.length > 0">
           <div class="col-md-12">
-            <p class="text-center text-primary">Edit Variables</p>
+            <h4 class="text-center text-primary border-bottom pb-2">Saved Variables</h4>
             <div class="form-group" v-for="(variable, variableIndex) in variablesList" :key="variableIndex">
-              <small class="form-text text-muted">
+              <button class="btn btn-outline-dark btn-block btn-sm" @click="insertVariables(variableIndex)">{{variable.heading}}</button>
+              <!-- <small class="form-text text-muted">
                 {{variable.heading}}
               </small>
-              <textarea class="form-control" name="variableTextBox" rows="5" style="width: 100%" v-model="variable.textarea"></textarea>
+              <textarea class="form-control" name="variableTextBox" rows="5" style="width: 100%" v-model="variable.textarea"></textarea> -->
             </div>
           </div>
         </div>
@@ -190,6 +191,7 @@ export default {
       var newProposalTextBoxes = this.newProposal[1].proposalBody;
       newProposalTextBoxes.push(this.newVariable);
       this.variablesList.push(this.newVariable)
+      localStorage.setItem('localStorageVariables', JSON.stringify(this.variablesList))
       this.newVariable =  {heading: '', textarea: '', type: 'var'}
       // console.log(this.newProposal[1]);
     },
@@ -201,6 +203,7 @@ export default {
 
     addVarToList(){
       this.variablesList.push(this.newVariable)
+      localStorage.setItem('localStorageVariables', JSON.stringify(this.variablesList))
       this.newVariable =  {heading: '', textarea: '', type: 'var'}
     },
 
@@ -214,10 +217,20 @@ export default {
         heading: this.newProposal[1].heading,
         text: text,
       });
+      localStorage.setItem('localStorageProposals', JSON.stringify(this.proposalsList))
       this.newProposal = [{ heading: null }, { proposalBody: [{ textarea: "" }] }]
       // console.log(text);
     },
   },
+
+  mounted(){
+    if (localStorage.localStorageProposals) {
+      this.proposalsList = JSON.parse(localStorage.localStorageProposals)
+    }
+    if(localStorage.localStorageVariables){
+      this.variablesList = JSON.parse(localStorage.localStorageVariables)
+    }
+  }
 };
 </script>
 
