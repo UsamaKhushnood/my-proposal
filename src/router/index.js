@@ -16,7 +16,7 @@ const routes = [{
             import ('../views/PageNotFound.vue')
     },
     {
-        path: '/templates',
+        path: '/variable',
         name: 'SavedTemplates',
         component: () =>
             import ('../views/SavedTemplates.vue')

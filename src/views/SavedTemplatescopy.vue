@@ -151,7 +151,7 @@
 import draggable from "vuedraggable";
 
 export default {
-  name: "SavedTemplates",
+  name: "SavedTemplatescopy",
   components: { draggable },
   data() {
     return {

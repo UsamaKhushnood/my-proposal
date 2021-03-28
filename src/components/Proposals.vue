@@ -154,18 +154,12 @@ export default {
 
         // Resetting All Values
         this.getFireStoreData();
-        // this.updateAccordingToSorting();
         this.newProposal.myInput = "";
         this.newProposal.heading = "";
         this.headingPlaceHolder = "Enter Heading here";
         this.inputMissing = false;
         this.headingMissing = false;
-        // this.updateAccordingToSorting()
       }
-    },
-
-    updateAccordingToSorting() {
-      this.proposalsList = this.$db.collection("usersNewProposal").orderBy("heading", "asc")
     },
 
     copyText(index) {
@@ -184,7 +178,7 @@ export default {
           this.proposalsList.splice(index, 1);
         })
         .catch((error) => {
-          console.log("Opps fail to delete record", error);
+          console.log("Oops fail to delete record", error);
         });
     },
 
