@@ -13,23 +13,16 @@
               class="form-control"
               id="proposal_heading"
               aria-describedby="heading_help"
-              v-model="newProposal[1].heading"
+              v-model="newProposal[0].heading"
               required
             />
           </div>
 
           <div
             class="form-group"
-            v-for="(textBox, textBoxKey) in newProposal[1].proposalBody"
+            v-for="(textBox, textBoxKey) in newProposal[0].proposalBody"
             :key="textBoxKey"
           >
-            <!-- <input
-              type="text"
-              class="form-control"
-              v-model="textBox.heading"
-              placeholder="Variable Name"
-              v-show="textBox.type == 'var'"
-            /> -->
             <small class="form-text text-muted">
               {{textBox.heading}}
             </small>
@@ -60,7 +53,7 @@
                 />
               </svg>
             </div>
-            <!-- <transition name="showTooltip"> -->
+            <transition name="showTooltip">
               <div class="module-tooltip" v-show="showtooltip">
                 <div class="tooltip-arrow"></div>
                 <div class="tooltip-header">
@@ -89,7 +82,7 @@
                   </button>
                 </div>
               </div>
-            <!-- </transition> -->
+            </transition>
             
             <!-- Modal -->
               <b-modal id="variableTextModal" centered scrollable size="xl" title="Variable Text">
@@ -131,10 +124,6 @@
             <h4 class="text-center text-primary border-bottom pb-2">Saved Variables</h4>
             <div class="form-group" v-for="(variable, variableIndex) in variablesList" :key="variableIndex">
               <button class="btn btn-outline-dark btn-block btn-sm" @click="insertVariables(variableIndex)">{{variable.heading}}</button>
-              <!-- <small class="form-text text-muted">
-                {{variable.heading}}
-              </small>
-              <textarea class="form-control" name="variableTextBox" rows="5" style="width: 100%" v-model="variable.textarea"></textarea> -->
             </div>
           </div>
         </div>
@@ -154,12 +143,14 @@
               v-model="proposal.heading"
             />
             <textarea
-              class="form-control"
+              class="form-control border-radius-0"
+              :class="['obj-' + proposalIndex]"
               name="singleProposal"
               rows="5"
               v-model="proposal.text"
               style="width: 100%"
             ></textarea>
+            <button class="btn btn-outline-danger btn-block" @click="copyProposal(proposalIndex)">copy</button>
           </div>
         </div>
       </div>
@@ -169,35 +160,32 @@
 </template>
 <script>
 export default {
-  name: "SavedTemplate",
+  name: "variable",
   data: () => ({
     showtooltip: false,
-    newProposal: [{ heading: null }, { proposalBody: [{ textarea: "" }] }],
+    someText: 'some text',
+    newProposal: [{heading: '', proposalBody: [{ textarea: "" }] }],
     proposalsList: [],
     newVariable: {heading: '', textarea: '', type: 'var'},
-    variablesList: [
-
-    ],
+    variablesList: [],
   }),
   methods: {
     addSimpleTextBox() {
-      var newProposalTextBoxes = this.newProposal[1].proposalBody;
+      var newProposalTextBoxes = this.newProposal[0].proposalBody;
       newProposalTextBoxes.push({ textarea: "" });
       this.showtooltip = !this.showtooltip;
-      // console.log(this.newProposal[1]);
     },
 
     addVarTextBox() {
-      var newProposalTextBoxes = this.newProposal[1].proposalBody;
+      var newProposalTextBoxes = this.newProposal[0].proposalBody;
       newProposalTextBoxes.push(this.newVariable);
       this.variablesList.push(this.newVariable)
       localStorage.setItem('localStorageVariables', JSON.stringify(this.variablesList))
       this.newVariable =  {heading: '', textarea: '', type: 'var'}
-      // console.log(this.newProposal[1]);
     },
 
     insertVariables(vIndex){
-      var newProposalTextBoxes = this.newProposal[1].proposalBody;
+      var newProposalTextBoxes = this.newProposal[0].proposalBody;
       newProposalTextBoxes.push(this.variablesList[vIndex]);
     },
 
@@ -208,19 +196,25 @@ export default {
     },
 
     addProposal() {
-      var proposals = this.newProposal[1].proposalBody;
+      var proposals = this.newProposal[0].proposalBody;
       var text = "";
       proposals.forEach((proposal) => {
         text = text + proposal.textarea + "\n";
       });
       this.proposalsList.push({
-        heading: this.newProposal[1].heading,
+        heading: this.newProposal[0].heading,
         text: text,
       });
       localStorage.setItem('localStorageProposals', JSON.stringify(this.proposalsList))
       this.newProposal = [{ heading: null }, { proposalBody: [{ textarea: "" }] }]
-      // console.log(text);
     },
+
+    copyProposal(proposalIndex){
+      var textToCopy = document.querySelector(`.obj-${proposalIndex}`);
+      textToCopy.select();
+      document.execCommand("copy");
+    },
+
   },
 
   mounted(){
@@ -295,6 +289,10 @@ export default {
 
 .showTooltip-enter-active {
   transition: all 0.3s;
+}
+
+.form-control {
+  border-radius: 0;
 }
 
 </style>

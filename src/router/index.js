@@ -17,9 +17,9 @@ const routes = [{
     },
     {
         path: '/variable',
-        name: 'SavedTemplates',
+        name: 'Variable',
         component: () =>
-            import ('../views/SavedTemplates.vue')
+            import ('../views/Variable.vue')
     },
     {
         path: '/about',
