@@ -22,6 +22,12 @@ const routes = [{
             import ('../views/Variable.vue')
     },
     {
+        path: '/variable-dynamic',
+        name: 'VariableDynamic',
+        component: () =>
+            import ('../views/VariableDynamic.vue')
+    },
+    {
         path: '/about',
         name: 'About',
         component: () =>

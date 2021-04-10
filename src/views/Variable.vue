@@ -13,14 +13,14 @@
               class="form-control"
               id="proposal_heading"
               aria-describedby="heading_help"
-              v-model="newProposal[0].heading"
+              v-model="newProposal.heading"
               required
             />
           </div>
 
           <div
             class="form-group"
-            v-for="(textBox, textBoxKey) in newProposal[0].proposalBody"
+            v-for="(textBox, textBoxKey) in newProposal.proposalBody"
             :key="textBoxKey"
           >
             <small class="form-text text-muted">
@@ -106,6 +106,7 @@
                           </small>
                           <textarea class="form-control" v-model="variableText.textarea" rows="5"></textarea>
                           <button class="btn btn-dark btn-block mt-2" @click="insertVariables(vIndex)">Insert</button>
+                          <button class="btn btn-dark btn-block mt-2" @click="updateVariables(vIndex)">Update</button>
                         </div>
                       </div>
                     </div>
@@ -150,7 +151,8 @@
               v-model="proposal.text"
               style="width: 100%"
             ></textarea>
-            <button class="btn btn-outline-danger btn-block" @click="copyProposal(proposalIndex)">copy</button>
+            <button class="btn btn-outline-primary btn-block mt-1" @click="copyProposal(proposalIndex)">copy</button>
+            <button class="btn btn-outline-danger btn-block mt-1" @click="deleteProposal(proposalIndex)">Delete</button>
           </div>
         </div>
       </div>
@@ -164,20 +166,20 @@ export default {
   data: () => ({
     showtooltip: false,
     someText: 'some text',
-    newProposal: [{heading: '', proposalBody: [{ textarea: "" }] }],
+    newProposal: {heading: '', proposalBody: [{ textarea: "" }] },
     proposalsList: [],
-    newVariable: {heading: '', textarea: '', type: 'var'},
+    newVariable: {heading: '', textarea: '', type: 'var', varPath: ''},
     variablesList: [],
   }),
   methods: {
     addSimpleTextBox() {
-      var newProposalTextBoxes = this.newProposal[0].proposalBody;
+      var newProposalTextBoxes = this.newProposal.proposalBody;
       newProposalTextBoxes.push({ textarea: "" });
       this.showtooltip = !this.showtooltip;
     },
 
     addVarTextBox() {
-      var newProposalTextBoxes = this.newProposal[0].proposalBody;
+      var newProposalTextBoxes = this.newProposal.proposalBody;
       newProposalTextBoxes.push(this.newVariable);
       this.variablesList.push(this.newVariable)
       localStorage.setItem('localStorageVariables', JSON.stringify(this.variablesList))
@@ -185,28 +187,44 @@ export default {
     },
 
     insertVariables(vIndex){
-      var newProposalTextBoxes = this.newProposal[0].proposalBody;
+      var newProposalTextBoxes = this.newProposal.proposalBody;
       newProposalTextBoxes.push(this.variablesList[vIndex]);
+      // newProposalTextBoxes.push({variableText: this.variablesList[vIndex] ,variableIndex: `this.variablesList[${vIndex}]`});
+      // this.variablesList[vIndex].varPath = `this.variablesList[${vIndex}]`
+      this.variablesList[vIndex].varPath = `${vIndex}`
+    },
+
+    updateVariables(){
+      localStorage.setItem('localStorageVariables', JSON.stringify(this.variablesList))
     },
 
     addVarToList(){
       this.variablesList.push(this.newVariable)
       localStorage.setItem('localStorageVariables', JSON.stringify(this.variablesList))
-      this.newVariable =  {heading: '', textarea: '', type: 'var'}
+      // this.newVariable =  {heading: '', textarea: '', type: 'var', varPath: `this.variablesList[${this.variablesList.length}]`}
+      this.newVariable =  {heading: '', textarea: '', type: 'var', varPath: `${this.variablesList.length + 1}`}
     },
 
     addProposal() {
-      var proposals = this.newProposal[0].proposalBody;
+      var proposals = this.newProposal.proposalBody;
       var text = "";
       proposals.forEach((proposal) => {
         text = text + proposal.textarea + "\n";
+        // if(proposal.varPath){
+        //   var getvariableText = this.variablesList[proposal.varPath].textarea
+        //   text = text + proposal.varPath + "\n"
+        //   console.log("proposalsBody",proposal.varPath);
+        //   console.log("text",getvariableText);
+        // } else {
+        //   console.log('no varpathh');
+        // }
       });
       this.proposalsList.push({
-        heading: this.newProposal[0].heading,
+        heading: this.newProposal.heading,
         text: text,
       });
       localStorage.setItem('localStorageProposals', JSON.stringify(this.proposalsList))
-      this.newProposal = [{ heading: null }, { proposalBody: [{ textarea: "" }] }]
+      this.newProposal = {heading: '', proposalBody: [{ textarea: "" }] }
     },
 
     copyProposal(proposalIndex){
@@ -214,6 +232,11 @@ export default {
       textToCopy.select();
       document.execCommand("copy");
     },
+    
+    deleteProposal(proposalIndex){
+      this.proposalsList.splice(proposalIndex, 1)
+      localStorage.setItem('localStorageProposals', JSON.stringify(this.proposalsList))
+    }
 
   },
 
